@@ -6,38 +6,56 @@ import { dispatcher } from '../../../core/dispatcher';
 
 export function useVisualizer() {
   const [state, setState] = useState<RepoVisualizerState>(getStoredVisualizerState());
+  const [isDispatching, setIsDispatching] = useState(false);
 
   useEffect(() => {
     const unsub = dispatcher.on('visualizer:updated', (data: RepoVisualizerState) => {
       setState(data);
     });
-    return () => unsub();
+    const unsubRefactor = dispatcher.on('visualizer:apply_refactor', (data: { title?: string; description?: string }) => {
+      const randomId = `mod-refactor-${Math.floor(Math.random() * 1000)}`;
+      addSuggestedRefactorNode(
+        randomId,
+        data?.title ? data.title.replace('Refaktor Arsitektur: ', '') : 'modules/optimizedArchitecture',
+        'module',
+        data?.description || 'Modul hasil refaktor otonom agen yang dioptimalkan',
+        ['executeOptimizer', 'validateIsolation'],
+        'core-dispatcher'
+      );
+    });
+    return () => {
+      unsub();
+      unsubRefactor();
+    };
   }, []);
 
-  const triggerMockRefactor = () => {
-    const randomId = `mod-refactor-${Math.floor(Math.random() * 1000)}`;
-    const randomNum = Math.floor(Math.random() * 4);
+  const dispatchRefactorTask = () => {
+    setIsDispatching(true);
     const options = [
-      { label: 'modules/optimizationEngine', desc: 'Mesin otomatis kompresi bundle JS dan optimasi resource', methods: ['optimizeAssets', 'compressImages'] },
+      { label: 'modules/optimizationEngine', desc: 'Mesin otomatis kompresi bundle JS dan optimasi memori runtime', methods: ['optimizeAssets', 'compressImages'] },
       { label: 'modules/securityAudit', desc: 'Pemindai otomatis file manifestasi untuk identifikasi OAuth token bocor', methods: ['auditTokens', 'sanitizeLogs'] },
       { label: 'modules/telemetryLogger', desc: 'Log metrik runtime performa renderer klien secara real-time', methods: ['logMetric', 'getReport'] },
       { label: 'modules/cacheManager', desc: 'Adapter cache terisolasi untuk state manajemen luring', methods: ['getCache', 'setCache'] },
     ];
-    const picked = options[randomNum];
+    const picked = options[Math.floor(Math.random() * options.length)];
 
-    addSuggestedRefactorNode(
-      randomId,
-      picked.label,
-      'module',
-      picked.desc,
-      picked.methods,
-      'core-dispatcher'
-    );
+    dispatcher.emit('agent_task:create_and_run', {
+      title: `Refaktor: ${picked.label}`,
+      description: `Refaktor arsitektur repositori: Dekomposisi ${picked.label} agar file <125 baris & terisolasi di dispatcher. ${picked.desc}`,
+      category: 'refactoring',
+      priority: 'high',
+      status: 'pending',
+      estimatedSeconds: 30,
+    });
+
+    setTimeout(() => setIsDispatching(false), 1200);
   };
 
   return {
     state,
-    triggerMockRefactor,
+    isDispatching,
+    dispatchRefactorTask,
+    triggerMockRefactor: dispatchRefactorTask,
     reset: () => setState(resetVisualizerState()),
     refresh: () => setState(getStoredVisualizerState()),
   };

@@ -47,7 +47,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-zinc-50/50 text-zinc-900 font-sans flex flex-col antialiased">
-      <AppHeader />
+      <AppHeader repoFullName={selectedRepo?.full_name} />
 
       {/* Main Board */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 grid grid-cols-1 md:grid-cols-12 gap-4">

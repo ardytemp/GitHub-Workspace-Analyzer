@@ -70,3 +70,10 @@ export function saveStoredTasks(tasks: AgentTask[]): void {
     console.error('[Module:agentTaskQueue] Error saving tasks:', err);
   }
 }
+
+export function updateStoredTask(id: string, updates: Partial<AgentTask>): AgentTask[] {
+  const current = getStoredTasks();
+  const updated = current.map((t) => (t.id === id ? { ...t, ...updates } : t));
+  saveStoredTasks(updated);
+  return updated;
+}

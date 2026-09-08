@@ -1,9 +1,16 @@
 import React from 'react';
 import { Github } from 'lucide-react';
 import { NotificationCenter } from '../modules/notification';
-import { AuthPanel } from '../modules/auth';
+import { AuthPanel, useAuth } from '../modules/auth';
+import { VoiceCommanderButton } from '../modules/voiceCommander';
 
-export function AppHeader() {
+interface AppHeaderProps {
+  repoFullName?: string;
+}
+
+export function AppHeader({ repoFullName }: AppHeaderProps) {
+  const { token } = useAuth();
+
   return (
     <header className="border-b border-zinc-200 bg-white sticky top-0 z-10 px-4 py-3 flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -18,6 +25,7 @@ export function AppHeader() {
         </div>
       </div>
       <div className="flex items-center gap-2.5">
+        <VoiceCommanderButton repoFullName={repoFullName} token={token} />
         <NotificationCenter />
         <div className="h-4 w-[1px] bg-zinc-200" />
         <AuthPanel />

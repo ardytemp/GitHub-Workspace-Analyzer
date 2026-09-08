@@ -33,7 +33,7 @@ export function PreFlightModal({ onClose }: PreFlightModalProps) {
             </div>
             <div>
               <h3 className="text-xs font-bold text-zinc-900 leading-none">AI PR Pre-Flight Audit</h3>
-              <p className="text-[10px] text-zinc-500 font-medium mt-0.5">Simulasi peer-review tingkat tinggi untuk memeriksa celah keamanan dan pelanggaran arsitektur</p>
+              <p className="text-[10px] text-zinc-500 font-medium mt-0.5">Audit peer-review tingkat tinggi untuk memeriksa celah keamanan dan pelanggaran arsitektur</p>
             </div>
           </div>
           <button onClick={onClose} className="p-1 text-zinc-400 hover:text-zinc-700 rounded-lg cursor-pointer"><X className="w-4 h-4" /></button>

@@ -1,38 +1,54 @@
 import React from 'react';
 import { useManifestSecurityAudit } from '../logic/useManifestSecurityAudit';
-import { triggerGenerateFixPr } from '../logic/triggerFixPr';
+import { triggerAgentAuditExecution } from '../logic/triggerFixPr';
 import { VulnerabilityList } from './VulnerabilityList';
 import { ManifestAuditMetrics } from './ManifestAuditMetrics';
+import { ManifestAuditSummaryBox } from './ManifestAuditSummaryBox';
 import { Card } from '../../../shared/atoms/Card';
 import { Button } from '../../../shared/atoms/Button';
 import { Loading } from '../../../shared/atoms/Loading';
-import { RefreshCw, FileCode, Package, Zap, GitPullRequest, CheckCircle } from 'lucide-react';
+import { RefreshCw, FileCode, CheckCircle, Bot } from 'lucide-react';
 
 interface ManifestSecurityCardProps {
   repoFullName: string;
 }
 
 export function ManifestSecurityCard({ repoFullName }: ManifestSecurityCardProps) {
-  const { result, loading, upgrading, error, successMsg, reAudit, autoFixUpgrade } = useManifestSecurityAudit(repoFullName);
+  const { result, loading, upgrading, error, successMsg, reAudit, autoFixUpgrade } =
+    useManifestSecurityAudit(repoFullName);
 
-  const hasVulnerabilities = result && result.vulnerabilities.length > 0;
-  const hasUpgrades = result && result.vulnerabilities.some((v) => v.fixedIn);
+  const hasVulnerabilities = !!(result && result.vulnerabilities.length > 0);
+  const hasUpgrades = !!(result && result.vulnerabilities.some((v) => v.fixedIn));
 
   return (
     <Card
       title="Audit Keamanan Dependensi"
       subtitle="Analisis package.json & requirements.txt dengan Gemini"
       headerAction={
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={reAudit}
-          disabled={loading || upgrading}
-          icon={<RefreshCw className={`w-3.5 h-3.5 text-zinc-600 ${loading ? 'animate-spin' : ''}`} />}
-          className="h-7 text-xs font-semibold"
-        >
-          Pindai Ulang
-        </Button>
+        <div className="flex items-center gap-1.5">
+          {hasVulnerabilities && result && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => triggerAgentAuditExecution(repoFullName, result)}
+              disabled={loading || upgrading}
+              icon={<Bot className="w-3.5 h-3.5 text-emerald-300" />}
+              className="h-7 text-xs font-bold bg-indigo-700 hover:bg-indigo-800"
+            >
+              Eksekusi via Agent
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={reAudit}
+            disabled={loading || upgrading}
+            icon={<RefreshCw className={`w-3.5 h-3.5 text-zinc-600 ${loading ? 'animate-spin' : ''}`} />}
+            className="h-7 text-xs font-semibold"
+          >
+            Pindai Ulang
+          </Button>
+        </div>
       }
     >
       <div className="flex flex-col gap-3">
@@ -57,57 +73,31 @@ export function ManifestSecurityCard({ repoFullName }: ManifestSecurityCardProps
               <>
                 <ManifestAuditMetrics result={result} />
 
-                {/* AI Executive Summary & Action Buttons */}
-                {result.aiSummary && (
-                  <div className="p-2.5 bg-purple-50/60 rounded-xl border border-purple-200 text-xs text-zinc-800 flex flex-col gap-2">
-                    <div className="flex flex-wrap items-center justify-between gap-1.5">
-                      <div className="flex items-center gap-1.5 font-bold text-purple-900 text-[11px]">
-                        <Package className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                        <span>Ringkasan Eksekutif Gemini</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => triggerGenerateFixPr(repoFullName, result)}
-                          icon={<GitPullRequest className="w-3.5 h-3.5 text-purple-700" />}
-                          className="h-6 text-[10.5px] px-2 border-purple-200 hover:bg-purple-100"
-                        >
-                          Generate Fix PR
-                        </Button>
-                        {hasUpgrades && (
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            onClick={autoFixUpgrade}
-                            disabled={upgrading}
-                            icon={<Zap className="w-3.5 h-3.5 text-amber-300" />}
-                            className="h-6 text-[10.5px] px-2 bg-purple-700 hover:bg-purple-800"
-                          >
-                            Auto-Fix & Commit
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-[11.5px] leading-relaxed text-zinc-700">{result.aiSummary}</p>
-                  </div>
-                )}
+                <ManifestAuditSummaryBox
+                  repoFullName={repoFullName}
+                  result={result}
+                  upgrading={upgrading}
+                  hasUpgrades={hasUpgrades}
+                  onAutoFixUpgrade={autoFixUpgrade}
+                />
 
-                {/* Vulnerability & Outdated Items */}
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[11px] font-bold text-zinc-800">Temuan & Rekomendasi Versi</span>
                     {hasVulnerabilities && (
                       <button
-                        onClick={() => triggerGenerateFixPr(repoFullName, result)}
-                        className="text-[10.5px] text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1 cursor-pointer"
+                        onClick={() => triggerAgentAuditExecution(repoFullName, result)}
+                        className="text-[10.5px] text-indigo-700 hover:text-indigo-900 font-semibold flex items-center gap-1 cursor-pointer"
                       >
-                        <GitPullRequest className="w-3 h-3" />
-                        Drafkan Perubahan PR
+                        <Bot className="w-3 h-3 text-indigo-600" />
+                        Minta Agent Eksekusi Semua
                       </button>
                     )}
                   </div>
-                  <VulnerabilityList items={result.vulnerabilities} />
+                  <VulnerabilityList
+                    items={result.vulnerabilities}
+                    onFixItem={(vuln) => triggerAgentAuditExecution(repoFullName, result, vuln)}
+                  />
                 </div>
               </>
             )}
@@ -118,5 +108,4 @@ export function ManifestSecurityCard({ repoFullName }: ManifestSecurityCardProps
   );
 }
 
-// Alias for explicit SecurityAuditCard naming
 export const SecurityAuditCard = ManifestSecurityCard;

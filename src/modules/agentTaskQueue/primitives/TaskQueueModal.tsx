@@ -1,21 +1,29 @@
 import React, { useState } from 'react';
 import { useTaskQueue } from '../logic/useTaskQueue';
 import { TaskQueueCard } from './TaskQueueCard';
+import { TaskQueueStats } from './TaskQueueStats';
 import { Button } from '../../../shared/atoms/Button';
-import { PlayCircle, PauseCircle, Clock, Trash2, X, RefreshCw, Layers } from 'lucide-react';
+import { X, RefreshCw, Layers, Bot } from 'lucide-react';
 
 interface TaskQueueModalProps {
   onClose: () => void;
 }
 
 export function TaskQueueModal({ onClose }: TaskQueueModalProps) {
-  const { tasks, summary, reorder, togglePause, cancel, refresh } = useTaskQueue();
+  const { tasks, summary, reorder, togglePause, cancel, executeTask, executeAll, refresh } = useTaskQueue();
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [isExecutingAll, setIsExecutingAll] = useState(false);
 
   const filteredTasks = tasks.filter((t) => {
     if (filterCategory === 'all') return true;
     return t.category === filterCategory;
   });
+
+  const handleExecuteAll = async () => {
+    setIsExecutingAll(true);
+    await executeAll();
+    setIsExecutingAll(false);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
@@ -29,7 +37,7 @@ export function TaskQueueModal({ onClose }: TaskQueueModalProps) {
             <div>
               <h3 className="text-xs font-bold text-zinc-900 leading-none">AI Agent Task Queue Dashboard</h3>
               <p className="text-[10px] text-zinc-500 font-medium mt-0.5">
-                Kendalikan tindakan otonom: Susun ulang, jeda, atau batalkan tugas latar belakang secara real-time
+                Kendalikan tindakan otonom: Susun ulang, jeda, atau eksekusi tugas latar belakang langsung ke Agen AI
               </p>
             </div>
           </div>
@@ -39,35 +47,9 @@ export function TaskQueueModal({ onClose }: TaskQueueModalProps) {
         </div>
 
         {/* Statistics Widgets */}
-        <div className="grid grid-cols-4 gap-2">
-          <div className="p-2.5 bg-indigo-50/80 rounded-xl border border-indigo-200 flex flex-col gap-0.5">
-            <span className="text-[9px] font-bold text-indigo-700 uppercase">Aktif Berjalan</span>
-            <span className="text-base font-black text-indigo-950 flex items-center gap-1">
-              <PlayCircle className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-              {summary.runningCount}
-            </span>
-          </div>
-          <div className="p-2.5 bg-amber-50/80 rounded-xl border border-amber-200 flex flex-col gap-0.5">
-            <span className="text-[9px] font-bold text-amber-700 uppercase">Dijeda (Paused)</span>
-            <span className="text-base font-black text-amber-950 flex items-center gap-1">
-              <PauseCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              {summary.pausedCount}
-            </span>
-          </div>
-          <div className="p-2.5 bg-blue-50/80 rounded-xl border border-blue-200 flex flex-col gap-0.5">
-            <span className="text-[9px] font-bold text-blue-700 uppercase">Menunggu Antrean</span>
-            <span className="text-base font-black text-blue-950 flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-              {summary.pendingCount}
-            </span>
-          </div>
-          <div className="p-2.5 bg-emerald-50/80 rounded-xl border border-emerald-200 flex flex-col gap-0.5">
-            <span className="text-[9px] font-bold text-emerald-700 uppercase">Total Tugas</span>
-            <span className="text-base font-black text-emerald-950">{summary.total}</span>
-          </div>
-        </div>
+        <TaskQueueStats summary={summary} />
 
-        {/* Category Filter and Refresh Actions */}
+        {/* Category Filter and Execute Actions */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 bg-zinc-100 p-0.5 rounded-lg border border-zinc-200">
             {['all', 'security', 'refactoring', 'testing', 'deployment'].map((cat) => (
@@ -83,15 +65,26 @@ export function TaskQueueModal({ onClose }: TaskQueueModalProps) {
             ))}
           </div>
 
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={refresh}
-            icon={<RefreshCw className="w-3 h-3 text-indigo-700" />}
-            className="h-6 text-[10px] font-bold text-indigo-800 bg-indigo-50 hover:bg-indigo-100"
-          >
-            Pindai Antrean
-          </Button>
+          <div className="flex items-center gap-1.5">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={refresh}
+              icon={<RefreshCw className="w-3 h-3 text-zinc-600" />}
+              className="h-6 text-[10px] font-bold text-zinc-700 bg-zinc-100 hover:bg-zinc-200"
+            >
+              Pindai
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleExecuteAll}
+              disabled={isExecutingAll || summary.pendingCount === 0}
+              icon={<Bot className="w-3 h-3 text-white" />}
+              className="h-6 text-[10px] font-bold bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              {isExecutingAll ? 'Mengeksekusi...' : 'Eksekusi Antrean'}
+            </Button>
+          </div>
         </div>
 
         {/* Task List container */}
@@ -108,6 +101,7 @@ export function TaskQueueModal({ onClose }: TaskQueueModalProps) {
                 onReorder={reorder}
                 onTogglePause={togglePause}
                 onCancel={cancel}
+                onExecute={executeTask}
               />
             ))
           )}

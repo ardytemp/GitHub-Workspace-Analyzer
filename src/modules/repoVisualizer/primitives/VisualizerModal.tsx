@@ -3,14 +3,14 @@ import { useVisualizer } from '../logic/useVisualizer';
 import { RepoTreeView } from './RepoTreeView';
 import { ArchitectureDiagramView } from './ArchitectureDiagramView';
 import { Button } from '../../../shared/atoms/Button';
-import { X, Network, FolderKanban, Play, RefreshCw, Layers } from 'lucide-react';
+import { X, Network, FolderKanban, Bot, RefreshCw } from 'lucide-react';
 
 interface VisualizerModalProps {
   onClose: () => void;
 }
 
 export function VisualizerModal({ onClose }: VisualizerModalProps) {
-  const { state, triggerMockRefactor, reset } = useVisualizer();
+  const { state, isDispatching, dispatchRefactorTask, reset } = useVisualizer();
   const [activeTab, setActiveTab] = useState<'architecture' | 'files'>('architecture');
 
   return (
@@ -58,15 +58,16 @@ export function VisualizerModal({ onClose }: VisualizerModalProps) {
             </button>
           </div>
 
-          {/* Simulate Suggestion Button */}
+          {/* Real Agent Refactor Task Dispatch Button */}
           <div className="flex items-center gap-1.5">
             <Button
               size="sm"
-              onClick={triggerMockRefactor}
-              icon={<Play className="w-3 h-3 text-emerald-600 animate-pulse" />}
-              className="h-7 text-[10px] font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200"
+              onClick={dispatchRefactorTask}
+              disabled={isDispatching}
+              icon={<Bot className={`w-3.5 h-3.5 ${isDispatching ? 'animate-spin text-indigo-600' : 'text-indigo-600'}`} />}
+              className="h-7 text-[10px] font-bold text-indigo-900 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 shadow-xs"
             >
-              Simulasi Refactoring Agen
+              {isDispatching ? 'Mengirim Task ke Agen...' : 'Tugaskan Agen Refactor'}
             </Button>
             <button
               onClick={reset}

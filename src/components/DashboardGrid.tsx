@@ -1,5 +1,5 @@
 import React from 'react';
-import { Network, ShieldAlert, Eye, Play } from 'lucide-react';
+import { Network, ShieldAlert, Eye, Play, Bot } from 'lucide-react';
 import { Button } from '../shared/atoms/Button';
 import { DeploymentCard } from '../modules/deployAutomation';
 
@@ -50,7 +50,7 @@ export function DashboardGrid({
           <Button size="sm" onClick={onOpenVis} icon={<Eye className="w-3 h-3" />} className="h-6 text-[9.5px] font-bold bg-white text-indigo-700 hover:bg-zinc-100 border border-zinc-200 shrink-0 flex-1 justify-center">
             Buka Peta
           </Button>
-          <Button size="sm" onClick={onTriggerRefactor} icon={<Play className="w-3 h-3 text-emerald-600" />} className="h-6 text-[9.5px] font-bold bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 w-8 p-0 flex justify-center shrink-0">
+          <Button size="sm" onClick={onTriggerRefactor} icon={<Bot className="w-3 h-3 text-indigo-600" />} className="h-6 text-[9.5px] font-bold bg-indigo-50 text-indigo-800 hover:bg-indigo-100 border border-indigo-200 w-8 p-0 flex justify-center shrink-0" title="Tugaskan Agen Refactor">
           </Button>
         </div>
       </div>

@@ -5,4 +5,4 @@ Modul **Repo Visualizer** (`modules/repoVisualizer`) menyediakan antarmuka visua
 ## Fitur Utama
 1. **Peta Arsitektur (ERD Map)**: Visualisasi relasi/hubungan antar-sel fungsional (`core`, `modules`, `shared`) untuk melacak aliran data.
 2. **Struktur Folder (Hierarchy Tree)**: Representasi hirarkis interaktif yang menunjukkan struktur folder dan berkas proyek fisik.
-3. **Simulasi Refactoring Terintegrasi**: Memungkinkan simulasi real-time penambahan modul rekomendasi otonom dari asisten AI.
+3. **Eksekusi Refactoring Otonom Terintegrasi**: Mengirim tugas dekomposisi dan refaktor langsung ke antrean tugas Agen AI (`agentTaskQueue`) dan memicu Copilot Agent via dispatcher untuk eksekusi nyata, yang memperbarui diagram arsitektur secara real-time.

@@ -30,6 +30,9 @@ export const MODULES_REGISTRY = {
   prPreFlight: { name: 'AI PR Pre-Flight Audit Module', version: '1.0.0' },
   deployAutomation: { name: 'Deploy Automation & Live Preview Module', version: '1.0.0' },
   voiceCommander: { name: 'AI Voice Commander Module', version: '1.0.0' },
+  gitSync: { name: 'Git Sync & Remote Push Module', version: '1.0.0' },
+  repoRecommendation: { name: 'AI Repo Recommendation & Quick Execution Module', version: '1.0.0' },
+  timeMachine: { name: 'Time Machine & Automated Rollback Module', version: '1.0.0' },
 };
 
 export function loadAllModules() {

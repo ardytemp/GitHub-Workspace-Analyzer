@@ -50,7 +50,7 @@ export function MarkdownRenderer({ text, repoFullName }: MarkdownRendererProps) 
               // Parse Headers
               if (trimmed.startsWith('### ')) {
                 return (
-                  <h4 key={lineIdx} className="font-bold text-zinc-900 text-xs mt-1">
+                  <h4 key={`md-h4-${index}-${lineIdx}`} className="font-bold text-zinc-900 text-xs mt-1">
                     {parseInlineStyles(trimmed.substring(4))}
                   </h4>
                 );
@@ -58,7 +58,7 @@ export function MarkdownRenderer({ text, repoFullName }: MarkdownRendererProps) 
               if (trimmed.startsWith('## ') || trimmed.startsWith('# ')) {
                 const cleanText = trimmed.startsWith('## ') ? trimmed.substring(3) : trimmed.substring(2);
                 return (
-                  <h3 key={lineIdx} className="font-bold text-zinc-950 text-xs mt-1.5 border-b border-zinc-200/50 pb-0.5">
+                  <h3 key={`md-h3-${index}-${lineIdx}`} className="font-bold text-zinc-950 text-xs mt-1.5 border-b border-zinc-200/50 pb-0.5">
                     {parseInlineStyles(cleanText)}
                   </h3>
                 );
@@ -67,7 +67,7 @@ export function MarkdownRenderer({ text, repoFullName }: MarkdownRendererProps) 
               // Parse Lists
               if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
                 return (
-                  <div key={lineIdx} className="flex gap-1.5 ml-1.5 text-zinc-700 leading-relaxed text-xs">
+                  <div key={`md-li-${index}-${lineIdx}`} className="flex gap-1.5 ml-1.5 text-zinc-700 leading-relaxed text-xs">
                     <span className="text-zinc-400 select-none">•</span>
                     <span className="flex-1">{parseInlineStyles(trimmed.substring(2))}</span>
                   </div>
@@ -76,7 +76,7 @@ export function MarkdownRenderer({ text, repoFullName }: MarkdownRendererProps) 
 
               // Default Paragraph
               return (
-                <p key={lineIdx} className="text-zinc-700 leading-relaxed text-xs">
+                <p key={`md-p-${index}-${lineIdx}`} className="text-zinc-700 leading-relaxed text-xs">
                   {parseInlineStyles(line)}
                 </p>
               );
@@ -98,14 +98,14 @@ function parseInlineStyles(text: string): React.ReactNode[] {
   return parts.map((part, i) => {
     if (part.startsWith('**') && part.endsWith('**')) {
       return (
-        <strong key={i} className="font-bold text-zinc-900">
+        <strong key={`str-${i}`} className="font-bold text-zinc-900">
           {part.substring(2, part.length - 2)}
         </strong>
       );
     }
     if (part.startsWith('`') && part.endsWith('`')) {
       return (
-        <code key={i} className="px-1 py-0.5 rounded bg-zinc-250 text-zinc-800 font-mono text-[10px] border border-zinc-300">
+        <code key={`code-${i}`} className="px-1 py-0.5 rounded bg-zinc-250 text-zinc-800 font-mono text-[10px] border border-zinc-300">
           {part.substring(1, part.length - 1)}
         </code>
       );

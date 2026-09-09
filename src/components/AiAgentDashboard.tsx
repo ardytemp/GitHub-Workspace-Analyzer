@@ -10,6 +10,7 @@ import { OfflineSyncPanel } from './OfflineSyncPanel';
 import { RepoRecommendationWidget } from '../modules/repoRecommendation';
 import { AiRefactorModal, generateRefactorProposal } from '../modules/repo';
 import { LargeScaleSuiteWidget } from './LargeScaleSuiteWidget';
+import { WorkflowStateVisualizer } from '../modules/autoDev';
 
 interface AiAgentDashboardProps {
   repoFullName: string;
@@ -65,6 +66,9 @@ export function AiAgentDashboard({ repoFullName }: AiAgentDashboardProps) {
           </div>
         </div>
       </div>
+
+      {/* Workflow State Visualizer for Auto-Dev Engine */}
+      <WorkflowStateVisualizer />
 
       {/* Large-Scale Project Suite with AUTO DEV Sakti Button */}
       <LargeScaleSuiteWidget />

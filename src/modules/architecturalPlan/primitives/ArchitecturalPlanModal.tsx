@@ -75,8 +75,8 @@ export function ArchitecturalPlanModal({ onClose }: ArchitecturalPlanModalProps)
               </span>
             </div>
 
-            {plan.phases.map((phs) => (
-              <div key={phs.phaseId} className="p-3 bg-zinc-50 border border-zinc-200 rounded-xl flex flex-col gap-1.5">
+            {plan.phases.map((phs, idx) => (
+              <div key={`archplan-phase-${phs.phaseId}-${idx}`} className="p-3 bg-zinc-50 border border-zinc-200 rounded-xl flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-zinc-900 text-[11px]">
                     Fase {phs.phaseId}: {phs.title}

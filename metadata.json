@@ -1,6 +1,6 @@
 {
-  "name": "AI Agent Dev-Center & GitHub Analyzer",
-  "description": "Platform analitik dan manajemen repositori GitHub bertenaga AI Agent. Dilengkapi dengan PR Pre-Flight Fix-It, OSV Audit, Memory Fragmentation Diagnostics, Offline Sync Worker, dan arsitektur cellular modular yang kokoh.",
+  "name": "AI Agent Dev-Center & Auto-Dev Engine",
+  "description": "Platform analitik, manajemen repositori, dan Auto-Dev Engine bertenaga AI Agent. Mengorkestrasi 5 poin infrastruktur utama (Symbol Navigation, Blast-Radius, Architectural Memory, Transactional Staging, dan Boundary Enforcement) dengan Workflow State Visualizer interaktif dan AI Studio Pro Playground.",
   "requestFramePermissions": [
     "microphone"
   ],
